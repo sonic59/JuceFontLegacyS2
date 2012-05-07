@@ -191,7 +191,17 @@ void AttributedString::setColour (const Colour& colour)
 
 void AttributedString::setFont (const Range<int>& range, const Font& font)
 {
-    attributes.add (new Attribute (range, font));
+    if (font.getTypefaceName() == Font::getDefaultSansSerifFontName() ||
+        font.getTypefaceName() == Font::getDefaultSerifFontName() ||
+        font.getTypefaceName() == Font::getDefaultMonospacedFontName())
+    {
+        Font defaultFont (Font::getDefaultTypefaceForFont (font));
+        attributes.add (new Attribute (range, defaultFont));
+    }
+    else
+    {
+        attributes.add (new Attribute (range, font));
+    }
 }
 
 void AttributedString::setFont (const Font& font)
@@ -200,7 +210,17 @@ void AttributedString::setFont (const Font& font)
         if (attributes.getUnchecked(i)->getFont() != nullptr)
             attributes.remove (i);
 
-    setFont (Range<int> (0, text.length()), font);
+    if (font.getTypefaceName() == Font::getDefaultSansSerifFontName() ||
+        font.getTypefaceName() == Font::getDefaultSerifFontName() ||
+        font.getTypefaceName() == Font::getDefaultMonospacedFontName())
+    {
+        Font defaultFont (Font::getDefaultTypefaceForFont (font));
+        setFont (Range<int> (0, text.length()), defaultFont);
+    }
+    else
+    {
+        setFont (Range<int> (0, text.length()), font);
+    }
 }
 
 void AttributedString::draw (Graphics& g, const Rectangle<float>& area) const
